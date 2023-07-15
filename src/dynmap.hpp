@@ -93,6 +93,32 @@ public:
         }
         return r;
     };
+    std::string getMapImage(int x, int z, int zoom = 0) {
+
+        if(x >= 0)
+            x = x / (32 * pow(2, zoom));
+        else 
+            x = ((x + 1) / (32 * pow(2, zoom))) - 1;
+        if(z >= 0)
+            z = z / (32 * pow(2, zoom));
+        else 
+            z = ((z + 1) / (32 * pow(2, zoom))) - 1;
+
+        x *= pow(2, zoom);
+        z *= pow(2, zoom);
+        int xa, za;
+        
+        if(x >= 0)
+            xa = x / 32;
+        else 
+            xa = ((x + 1) / 32) - 1;
+        if(z >= 0)
+            za = z / 32;
+        else 
+            za = ((z + 1) / 32) - 1;
+
+        return location + "tiles/world/flat/" + std::to_string(xa) + "_" + std::to_string(za) + "/" + std::string().insert(0, zoom, 'z') + (zoom ? "_" : "") + std::to_string(x) + "_" + std::to_string(z) + ".jpg";
+    };
     
     Dynmap(){};
     Dynmap(std::string location) : location(location){};
