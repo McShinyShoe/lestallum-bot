@@ -1,0 +1,7 @@
+[workspace]
+members = ["app", "shared", "api", "bot"]
+resolver = "2"
+default-members = ["app"]
+
+[workspace.lints.rust]
+unused = "allow"
