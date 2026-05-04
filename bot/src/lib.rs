@@ -13,7 +13,10 @@ use crate::event_handler::event_handler;
 pub async fn run(config: Arc<AppConfig>) -> Result<()> {
     let account = Account::microsoft(&config.email).await?;
 
-    let state: State = State {};
+    let state: State = State {
+        config: Some(config.clone()),
+        ..Default::default()
+    };
     let mc_version = config.mc_version.clone();
 
     ClientBuilder::new()
