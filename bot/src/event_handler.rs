@@ -6,6 +6,8 @@ use shared::bot_status::BotStatus;
 use shared::prelude::*;
 
 use crate::bot_state::State;
+use crate::chat_event::ChatEvent;
+use crate::chat_event_handler::{self, chat_event_handler};
 
 pub async fn event_handler(client: Client, event: Event, state: State) -> Result<()> {
     match event {
@@ -25,11 +27,16 @@ pub async fn event_handler(client: Client, event: Event, state: State) -> Result
             }
         }
         Event::Chat(chat_packet) => {
-            if (chat_packet.content() == format!("[+] {}", client.profile().name)) {
+            let content = chat_packet.content();
+
+            if (content == format!("[+] {}", client.profile().name)) {
                 tracing::info!("Logged in on towny");
                 let mut status = state.status.write().await;
                 *status = BotStatus::Idle;
             };
+            tracing::info!("Chat: {}", &content);
+            let chat_event = ChatEvent::identify(content);
+            chat_event_handler(client, chat_event, chat_packet, state).await?;
         }
         Event::Disconnect(reason) => {
             tracing::info!("Disconnected{}", {

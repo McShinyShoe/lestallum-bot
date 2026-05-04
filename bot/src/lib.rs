@@ -1,4 +1,6 @@
 mod bot_state;
+mod chat_event;
+mod chat_event_handler;
 mod event_handler;
 mod on_towny;
 
