@@ -4,6 +4,7 @@ use crate::bot_task::BotTask;
 pub enum BotStatus {
     #[default]
     Disconnected,
+    Starting,
     Busy(BotTask),
     Idle,
 }

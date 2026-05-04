@@ -1,5 +1,6 @@
 mod bot_state;
 mod event_handler;
+mod on_towny;
 
 use azalea::prelude::*;
 use azalea::{Client, ClientBuilder, Event};
