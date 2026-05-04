@@ -1,6 +1,6 @@
 use crate::bot_task::BotTask;
 
-#[derive(Default, Clone)]
+#[derive(Default, Clone, PartialEq)]
 pub enum BotStatus {
     #[default]
     Disconnected,

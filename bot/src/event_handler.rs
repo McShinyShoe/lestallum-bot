@@ -11,9 +11,18 @@ pub async fn event_handler(client: Client, event: Event, state: State) -> Result
     match event {
         Event::Login => {
             tracing::info!("Bot logged in as {}", client.profile().name);
-            client.chat("/server towny");
-            let mut status = state.status.write().await;
-            *status = BotStatus::Starting;
+            {
+                let mut status = state.status.write().await;
+                *status = BotStatus::Starting;
+            }
+            loop {
+                let mut status = state.status.read().await;
+                if *status == BotStatus::Starting {
+                    client.chat("/server towny");
+                    break;
+                }
+                client.wait_ticks(200);
+            }
         }
         Event::Chat(chat_packet) => {
             if (chat_packet.content() == format!("[+] {}", client.profile().name)) {
