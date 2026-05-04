@@ -6,6 +6,8 @@ pub struct AppConfig {
     pub port: Option<String>,
     pub email: String,
     pub mc_version: String,
+    pub anthropic_api_key: String,
+    pub context_file: String,
 }
 
 impl AppConfig {

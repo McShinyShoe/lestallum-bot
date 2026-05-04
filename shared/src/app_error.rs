@@ -1,14 +1,18 @@
 use std::fmt;
 
-use azalea_auth::AuthError;
+use azalea_auth::AuthError as AzaleaAuthError;
+use claude_sdk::Error as ClaudeError;
 use config::ConfigError;
-use tokio::task::JoinError;
+use std::io::Error as IOError;
+use tokio::task::JoinError as TokioJoinError;
 
 #[derive(Debug)]
 pub enum AppError {
     Config(ConfigError),
-    Join(JoinError),
-    Auth(AuthError),
+    Join(TokioJoinError),
+    Auth(AzaleaAuthError),
+    Claude(ClaudeError),
+    IO(IOError),
     Custom(String),
 }
 
@@ -18,6 +22,8 @@ impl fmt::Display for AppError {
             AppError::Config(e) => write!(f, "Config error: {e}"),
             AppError::Join(e) => write!(f, "Config error: {e}"),
             AppError::Auth(e) => write!(f, "Auth error: {e}"),
+            AppError::Claude(e) => write!(f, "Auth error: {e}"),
+            AppError::IO(e) => write!(f, "Auth error: {e}"),
             AppError::Custom(s) => write!(f, "Error: {s}"),
         }
     }
@@ -29,6 +35,8 @@ impl std::error::Error for AppError {
             AppError::Config(e) => Some(e),
             AppError::Join(e) => Some(e),
             AppError::Auth(e) => Some(e),
+            AppError::Claude(e) => Some(e),
+            AppError::IO(e) => Some(e),
             _ => None,
         }
     }
@@ -40,14 +48,14 @@ impl From<ConfigError> for AppError {
     }
 }
 
-impl From<JoinError> for AppError {
-    fn from(e: JoinError) -> Self {
+impl From<TokioJoinError> for AppError {
+    fn from(e: TokioJoinError) -> Self {
         AppError::Join(e)
     }
 }
 
-impl From<AuthError> for AppError {
-    fn from(e: AuthError) -> Self {
+impl From<AzaleaAuthError> for AppError {
+    fn from(e: AzaleaAuthError) -> Self {
         AppError::Auth(e)
     }
 }
@@ -61,6 +69,18 @@ impl From<Box<dyn std::any::Any + Send>> for AppError {
 impl From<Box<dyn std::error::Error + Send + Sync>> for AppError {
     fn from(e: Box<dyn std::error::Error + Send + Sync>) -> Self {
         AppError::Custom(e.to_string())
+    }
+}
+
+impl From<ClaudeError> for AppError {
+    fn from(e: ClaudeError) -> Self {
+        AppError::Claude(e)
+    }
+}
+
+impl From<IOError> for AppError {
+    fn from(e: IOError) -> Self {
+        AppError::IO(e)
     }
 }
 

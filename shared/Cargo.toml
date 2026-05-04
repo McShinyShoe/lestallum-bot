@@ -10,3 +10,7 @@ serde = "1.0"
 tracing = "0.1"
 tokio = { version = "1", features = ["full"] }
 azalea-auth = { git = "https://github.com/azalea-rs/azalea/" }
+claude-sdk = "1.0.0"
+
+[lints]
+workspace = true
