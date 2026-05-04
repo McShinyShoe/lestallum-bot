@@ -4,6 +4,8 @@ use serde::Deserialize;
 #[derive(Debug, Deserialize)]
 pub struct AppConfig {
     pub port: Option<String>,
+    pub email: String,
+    pub mc_version: String,
 }
 
 impl AppConfig {

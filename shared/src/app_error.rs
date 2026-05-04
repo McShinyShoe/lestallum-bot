@@ -1,5 +1,6 @@
 use std::fmt;
 
+use azalea_auth::AuthError;
 use config::ConfigError;
 use tokio::task::JoinError;
 
@@ -7,6 +8,7 @@ use tokio::task::JoinError;
 pub enum AppError {
     Config(ConfigError),
     Join(JoinError),
+    Auth(AuthError),
     Custom(String),
 }
 
@@ -15,7 +17,8 @@ impl fmt::Display for AppError {
         match self {
             AppError::Config(e) => write!(f, "Config error: {e}"),
             AppError::Join(e) => write!(f, "Config error: {e}"),
-            AppError::Custom(s) => write!(f, "{s}"),
+            AppError::Auth(e) => write!(f, "Auth error: {e}"),
+            AppError::Custom(s) => write!(f, "Error: {s}"),
         }
     }
 }
@@ -25,6 +28,7 @@ impl std::error::Error for AppError {
         match self {
             AppError::Config(e) => Some(e),
             AppError::Join(e) => Some(e),
+            AppError::Auth(e) => Some(e),
             _ => None,
         }
     }
@@ -39,6 +43,24 @@ impl From<ConfigError> for AppError {
 impl From<JoinError> for AppError {
     fn from(e: JoinError) -> Self {
         AppError::Join(e)
+    }
+}
+
+impl From<AuthError> for AppError {
+    fn from(e: AuthError) -> Self {
+        AppError::Auth(e)
+    }
+}
+
+impl From<Box<dyn std::any::Any + Send>> for AppError {
+    fn from(e: Box<dyn std::any::Any + Send>) -> Self {
+        AppError::Custom(format!("{e:?}"))
+    }
+}
+
+impl From<Box<dyn std::error::Error + Send + Sync>> for AppError {
+    fn from(e: Box<dyn std::error::Error + Send + Sync>) -> Self {
+        AppError::Custom(e.to_string())
     }
 }
 

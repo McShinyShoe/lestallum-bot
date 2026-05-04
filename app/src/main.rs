@@ -4,16 +4,31 @@ use shared::prelude::*;
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    let config = AppConfig::new()?;
+    tracing_subscriber::fmt::try_init()?;
+
+    let config: AppConfig = AppConfig::new()?;
     let config_store = Arc::new(config);
 
-    let bot_handle = tokio::spawn(bot::run(config_store.clone()));
-    let api_handle = tokio::spawn(api::run(config_store.clone()));
+    let bot_config = config_store.clone();
+    let bot_thread = std::thread::spawn(move || {
+        tokio::runtime::Builder::new_current_thread()
+            .enable_all()
+            .build()
+            .unwrap()
+            .block_on(bot::run(bot_config))
+    });
 
-    let (bot_res, api_res) = tokio::join!(bot_handle, api_handle);
+    let api_config = config_store.clone();
+    let api_thread = std::thread::spawn(move || {
+        tokio::runtime::Builder::new_current_thread()
+            .enable_all()
+            .build()
+            .unwrap()
+            .block_on(api::run(api_config))
+    });
 
-    bot_res??;
-    api_res??;
+    api_thread.join()?;
+    bot_thread.join()?;
 
     tokio::signal::ctrl_c().await.unwrap();
 

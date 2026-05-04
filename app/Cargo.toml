@@ -8,6 +8,8 @@ shared = { path = "../shared" }
 api = { path = "../api" }
 bot = { path = "../bot" }
 tokio = { version = "1", features = ["full"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 
 [lints]
 workspace = true

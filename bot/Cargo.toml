@@ -5,7 +5,10 @@ edition = "2024"
 
 [dependencies]
 shared = { path = "../shared" }
-azalea = "0.16.0"
+azalea = { git = "https://github.com/azalea-rs/azalea/" }
+azalea-auth = { git = "https://github.com/azalea-rs/azalea/" }
+azalea-viaversion = { git = "https://github.com/azalea-rs/azalea-viaversion" }
+tracing = "0.1"
 tokio = { version = "1", features = ["full"] }
 
 [lints]
